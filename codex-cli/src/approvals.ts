@@ -336,6 +336,7 @@ export function isSafeCommand(
   const [cmd0, cmd1, cmd2, cmd3] = command;
 
   switch (cmd0) {
+    // Existing safe commands
     case "cd":
       return {
         reason: "Change directory",
@@ -368,9 +369,162 @@ export function isSafeCommand(
         reason: "Ripgrep search",
         group: "Searching",
       };
+
+    // File operations (added/expanded)
+    case "touch":
+      return {
+        reason: "Create empty file",
+        group: "File operations",
+      };
+    case "mkdir":
+      return {
+        reason: "Create directory",
+        group: "File operations",
+      };
+    case "rm":
+      return {
+        reason: "Remove files",
+        group: "File operations",
+      };
+    case "cp":
+      return {
+        reason: "Copy files",
+        group: "File operations",
+      };
+    case "mv":
+      return {
+        reason: "Move files",
+        group: "File operations",
+      };
+    case "chmod":
+      return {
+        reason: "Change file permissions",
+        group: "File operations",
+      };
+    case "tee":
+      return {
+        reason: "Write to file",
+        group: "File operations",
+      };
+
+    // Git commands (expanded)
+    case "git":
+      switch (cmd1) {
+        // Existing git commands
+        case "status":
+          return {
+            reason: "Git status",
+            group: "Versioning",
+          };
+        case "branch":
+          return {
+            reason: "List Git branches",
+            group: "Versioning",
+          };
+        case "log":
+          return {
+            reason: "Git log",
+            group: "Using git",
+          };
+        case "diff":
+          return {
+            reason: "Git diff",
+            group: "Using git",
+          };
+        case "show":
+          return {
+            reason: "Git show",
+            group: "Using git",
+          };
+
+        // Added git commands
+        case "add":
+          return {
+            reason: "Git add files",
+            group: "Using git",
+          };
+        case "commit":
+          return {
+            reason: "Git commit changes",
+            group: "Using git",
+          };
+        case "push":
+          return {
+            reason: "Git push changes",
+            group: "Using git",
+          };
+        case "pull":
+          return {
+            reason: "Git pull changes",
+            group: "Using git",
+          };
+        case "checkout":
+          return {
+            reason: "Git checkout",
+            group: "Using git",
+          };
+        case "switch":
+          return {
+            reason: "Git switch branch",
+            group: "Using git",
+          };
+        case "merge":
+          return {
+            reason: "Git merge branches",
+            group: "Using git",
+          };
+        case "reset":
+          return {
+            reason: "Git reset",
+            group: "Using git",
+          };
+        case "stash":
+          return {
+            reason: "Git stash",
+            group: "Using git",
+          };
+        case "clone":
+          return {
+            reason: "Git clone repository",
+            group: "Using git",
+          };
+        case "init":
+          return {
+            reason: "Git initialize repository",
+            group: "Using git",
+          };
+        case "fetch":
+          return {
+            reason: "Git fetch",
+            group: "Using git",
+          };
+        case "remote":
+          return {
+            reason: "Git remote",
+            group: "Using git",
+          };
+        case "tag":
+          return {
+            reason: "Git tag",
+            group: "Using git",
+          };
+        case "rebase":
+          return {
+            reason: "Git rebase",
+            group: "Using git",
+          };
+        case "cherry-pick":
+          return {
+            reason: "Git cherry-pick",
+            group: "Using git",
+          };
+        default:
+          return null;
+      }
+
+    // Other tools
     case "find": {
-      // Certain options to `find` allow executing arbitrary processes, so we
-      // cannot auto-approve them.
+      // Existing find command logic
       if (
         command.some((arg: string) => UNSAFE_OPTIONS_FOR_FIND_COMMAND.has(arg))
       ) {
@@ -407,44 +561,41 @@ export function isSafeCommand(
         reason: "Locate command",
         group: "Searching",
       };
-    case "git":
-      switch (cmd1) {
-        case "status":
-          return {
-            reason: "Git status",
-            group: "Versioning",
-          };
-        case "branch":
-          return {
-            reason: "List Git branches",
-            group: "Versioning",
-          };
-        case "log":
-          return {
-            reason: "Git log",
-            group: "Using git",
-          };
-        case "diff":
-          return {
-            reason: "Git diff",
-            group: "Using git",
-          };
-        case "show":
-          return {
-            reason: "Git show",
-            group: "Using git",
-          };
-        default:
-          return null;
-      }
+
+    // Building and package management
+    case "npm":
+      return {
+        reason: "Run npm command",
+        group: "Running commands",
+      };
+    case "yarn":
+      return {
+        reason: "Run yarn command",
+        group: "Running commands",
+      };
+    case "pnpm":
+      return {
+        reason: "Run pnpm command",
+        group: "Running commands",
+      };
+    case "node":
+      return {
+        reason: "Run Node.js script",
+        group: "Running commands",
+      };
+    case "python":
+    case "python3":
+      return {
+        reason: "Run Python script",
+        group: "Running commands",
+      };
     case "cargo":
-      if (cmd1 === "check") {
-        return {
-          reason: "Cargo check",
-          group: "Running command",
-        };
-      }
-      break;
+      return {
+        reason: "Run Cargo command",
+        group: "Running commands",
+      };
+
+    // Existing sed command logic
     case "sed":
       if (
         cmd1 === "-n" &&
@@ -457,7 +608,12 @@ export function isSafeCommand(
           group: "Reading files",
         };
       }
-      break;
+      // Adding general sed support
+      return {
+        reason: "Sed text processing",
+        group: "File operations",
+      };
+
     default:
       return null;
   }
